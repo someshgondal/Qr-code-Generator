@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QR-Code-Generator</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #262a2f;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .container {
+      width: 300px;
+      height: 200px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background-color: aliceblue;
+    }
+
+    p {
+      text-align: center;
+      font-weight: 700;
+      margin-bottom: 10px;
+      font-size: larger;
+    }
+
+    input {
+      outline: none;
+      border-radius: 5px;
+      width: 250px;
+      height: 30px;
+      text-align: left;
+      color: black;
+      font-size: larger;
+    }
+
+    button {
+      font-size: larger;
+      width: 150px;
+      background: rgb(15, 201, 218);
+      height: 30px;
+      padding: 5px;
+      box-shadow: black;
+      outline: 0;
+      border-radius: 10px;
+    }
+
+    @keyframes shake {
+      0% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      50% { transform: translateX(5px); }
+      75% { transform: translateX(-5px); }
+      100% { transform: translateX(0); }
+    }
+
+    .shake {
+      animation: shake 0.5s ease-in-out;
+    }
+
+    img {
+      margin: 10px;
+      outline: 1px solid;
+    }
+
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <p>Enter Your Text / URL</p>
+    <input type="text" id="enter">
+    <div class="imgbox">
+      <img src="" id="src-id" alt="QR Code">
+    </div>
+    <button id="btn">Generate QR Code</button>
+    <button id="rbtn">Reload</button>
+    <button type="button" id="downloadBtn" style="display: none;">Download</button> <!-- Hidden initially -->
+  </div>
+
+  <script>
+    const enterr = document.getElementById('enter');
+    const conti = document.getElementsByClassName('container')[0];
+    const srcc = document.getElementById('src-id');
+    const downloadBtn = document.getElementById('downloadBtn');
+
+    // Function to download the QR Code image
+    function downloadFile() {
+      const qrCodeUrl = srcc.src;  // Get the generated QR code image URL
+      const link = document.createElement('a');
+      link.href = qrCodeUrl;  // Set the URL to the QR code
+      link.download = 'qr-code.png';  // Filename to save the QR code as
+      link.click();  // Trigger the download
+    }
+
+    // Event listener for the generate button
+    document.getElementById('btn').addEventListener('click', () => {
+      if (enterr.value.trim() !== "") {
+        // Set the QR code source
+        const qrCodeUrl = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" + enterr.value;
+        srcc.src = qrCodeUrl;
+        conti.style.height = "500px"; // Increase container height when QR code is generated
+
+        // Show the download button after generating the QR code
+        downloadBtn.style.display = "inline-block";
+
+        // When the reload button is clicked, clear everything
+        document.getElementById('rbtn').addEventListener('click', () => {
+          enterr.value = "";  // Clear input
+          srcc.src = "";  // Clear QR code image
+          conti.style.height = "200px";  // Reset container height
+          downloadBtn.style.display = "none";  // Hide download button
+        });
+
+      } else {
+        // Shake the input field if empty
+        enterr.classList.add('shake');
+        setTimeout(() => {
+          enterr.classList.remove('shake');
+        }, 500);
+      }
+    });
+
+    // Event listener for the download button
+    downloadBtn.addEventListener('click', downloadFile);
+
+  </script>
+
+</body>
+</html>
